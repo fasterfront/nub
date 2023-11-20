@@ -1,0 +1,82 @@
+name: CI/CD
+on: [push]
+env:
+  APP: nub-${{ github.ref }}
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install dependencies
+        run: pnpm i
+      - name: Build the app
+        run: pnpm build
+      - name: Lint
+        run: pnpm lint
+      - name: Type check
+        run: pnpm typecheck
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
+    environment:
+      name: Production
+      url: https://nub.so
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install dependencies
+        run: pnpm i
+      - name: Deploy to production
+        run: flyctl deploy --remote-only
+  launch-branch-preview:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name != 'main' }}
+    concurrency:
+      group: pr-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Launch branch preview
+        run: |
+          if ! flyctl status --app "$APP"; then
+            flyctl launch --no-deploy --copy-config --name "$APP" --org faster-front -r iad
+            flyctl vol create litefs -a "$APP" -r iad -s 1 -y
+            flyctl consul attach -a "$APP"
+          fi
+  deploy-branch-preview:
+    needs: [launch-branch-preview]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name != 'main' }}
+    concurrency:
+      group: pr-${{ github.ref }}
+    environment:
+      name: ${{ github.ref_name }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy to branch preview
+        id: deploy
+        run: |
+          flyctl deploy -a $APP --remote-only
+          echo "::set-output name=url::https://$APP.fly.dev"

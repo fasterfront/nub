@@ -22,6 +22,7 @@
     "requestidlecallback": "^0.3.0"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.4.10",
     "@remix-run/dev": "^2.3.0",
     "@remix-run/eslint-config": "^2.3.0",
     "@types/express": "^4.17.20",
