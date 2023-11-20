@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 450 450">
+  <defs>
+    <linearGradient id="nub-favicon" x1="0" x2="0" y1="0" y2="100%" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#db62ac" />
+      <stop offset="100%" stop-color="#3abbea" />
+    </linearGradient>
+  </defs>
+  <g fill="url(#nub-favicon)">
+    <circle r="94.58" cy="97.08" cx="165.61" />
+    <circle r="72.07" cy="104.09" cx="357.76" />
+    <circle r="22.51" cy="187.16" cx="289.71" />
+    <circle r="71.54" cy="255.2" cx="71.54" />
+    <circle r="57.03" cy="266.71" cx="215.64" />
+    <circle r="51.52" cy="265.72" cx="398.79" />
+    <circle r="21.01" cy="248.2" cx="316.23" />
+    <circle r="63.02" cy="378.3" cx="308.22" />
+    <circle r="56.52" cy="390.32" cx="147.1" />
+  </g>
+</svg>
