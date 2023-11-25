@@ -1,0 +1,198 @@
+.button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: 1px solid transparent;
+  outline-offset: 2px;
+}
+
+.button.focused {
+  outline: 1px solid rgba(95, 87, 255, 0.75);
+  outline-offset: 2px;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.16) 16%,
+    transparent 100%
+  );
+}
+
+.button::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09) 0%,
+      transparent 100%
+    ),
+    theme(colors.neutral.900);
+}
+
+.button.theme-default {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.16) 0%,
+      transparent 100%
+    ),
+    theme(colors.neutral.900);
+  box-shadow:
+    0 0 0 1px theme(colors.neutral.900),
+    0 1px 2px 0 rgba(13, 13, 18, 0.4);
+}
+
+.inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  z-index: 5;
+  color: theme(textColor.white);
+  padding: theme(padding.2) theme(padding.3);
+  font-size: theme(fontSize.sm);
+  font-weight: theme(fontWeight.semibold);
+  column-gap: theme(gap.2);
+  height: 100%;
+  text-align: center;
+}
+
+.button.theme-unstyled .inner {
+  padding: 0;
+}
+
+.inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 1) 0%,
+    transparent 100%
+  );
+  opacity: 0.07;
+}
+
+.button.hovered .inner::before {
+  opacity: 0.14;
+}
+
+.button.pressed .inner::before {
+  background: theme(colors.neutral.900);
+  opacity: 0.14;
+}
+
+.button.rounded-default,
+.button.rounded-default::before,
+.button.rounded-default .inner,
+.button.rounded-default .inner::before {
+  border-radius: 6px;
+}
+
+.button.rounded-full,
+.button.rounded-full::before,
+.button.rounded-full .inner,
+.button.rounded-full .inner::before {
+  border-radius: 9999px;
+}
+
+.button.rounded-default::after {
+  border-radius: 5px;
+}
+
+.button.rounded-full::after {
+  border-radius: 9998px;
+}
+
+.button.theme-primary {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    theme(colors.primary);
+  box-shadow:
+    0px 0px 0px 1px #4f47eb,
+    0px 1px 2px 0px rgba(26, 19, 161, 0.5);
+}
+
+.button.theme-primary::after {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    theme(colors.primary);
+}
+
+/* Purple Active State */
+.button.theme-primary.pressed::after,
+.button.button.theme-primary:active {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.16) 100%
+    ),
+    theme(colors.primary);
+}
+.button.theme-primary.pressed .inner::before {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.16) 100%
+    ),
+    theme(colors.primary);
+  opacity: 0.14;
+}
+
+.button.theme-danger {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    theme(colors.danger);
+  box-shadow:
+    0px 0px 0px 1px #b71836,
+    0px 1px 2px 0px rgba(113, 14, 33, 0.5);
+}
+
+.button.theme-danger::after {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    theme(colors.danger);
+}
+
+.button.theme-danger.pressed .inner::before {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.16) 100%
+    ),
+    theme(colors.danger);
+  opacity: 0.14;
+}
+.button.theme-danger.pressed::after,
+.button.theme-danger.pressed {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.16) 100%
+    ),
+    theme(colors.danger);
+}
