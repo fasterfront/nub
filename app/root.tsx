@@ -9,6 +9,7 @@ import {
 } from '@remix-run/react'
 
 import favicon from 'assets/favicon.svg?url'
+import openSans from 'assets/open-sans.woff2'
 import 'assets/tailwind.css'
 
 export const links: LinksFunction = () => {
@@ -17,6 +18,13 @@ export const links: LinksFunction = () => {
       rel: 'icon',
       href: favicon,
       type: 'image/svg',
+    },
+    {
+      rel: 'preload',
+      href: openSans,
+      as: 'font',
+      type: 'font/woff2',
+      crossOrigin: 'anonymous',
     },
   ]
 }
