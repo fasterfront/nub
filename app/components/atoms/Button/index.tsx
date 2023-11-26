@@ -42,6 +42,7 @@ export default forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(
       (renderProps: ButtonRenderProps) =>
         cx(
           styles.button,
+          theme === 'default' && 'dark',
           styles[`theme-${theme}`],
           styles[`rounded-${rounded}`],
           'transition',

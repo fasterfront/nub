@@ -31,14 +31,14 @@ export const links: LinksFunction = () => {
 
 export default function App() {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="dark h-full">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className="h-full bg-neutral-800 text-neutral-100">
+      <body className="bg-mauve-2 text-mauve-12 h-full">
         <Outlet />
         <ScrollRestoration />
         <Scripts />

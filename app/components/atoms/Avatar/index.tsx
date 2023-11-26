@@ -9,7 +9,7 @@ export default function Avatar({ name, image }: AvatarProps) {
     <img
       alt={name}
       src={image ?? userIcon}
-      className="h-8 w-8 overflow-clip rounded-full ring-1 ring-neutral-100 ring-opacity-10 ring-offset-2 ring-offset-neutral-800"
+      className="ring-mauve-a6 ring-offset-mauve-2 h-8 w-8 overflow-clip rounded-full ring-1 ring-offset-2"
     />
   )
 }

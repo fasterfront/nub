@@ -1,3 +1,12 @@
+@import '@radix-ui/colors/gray.css';
+@import '@radix-ui/colors/gray-dark.css';
+@import '@radix-ui/colors/mauve.css';
+@import '@radix-ui/colors/mauve-alpha.css';
+@import '@radix-ui/colors/mauve-dark.css';
+@import '@radix-ui/colors/mauve-dark-alpha.css';
+@import '@radix-ui/colors/violet.css';
+@import '@radix-ui/colors/violet-dark.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,4 +40,30 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+body {
+  background-image: linear-gradient(
+      theme(colors.mauve.a2) 0.8px,
+      transparent 0.8px
+    ),
+    linear-gradient(
+      to right,
+      theme(colors.mauve.a2) 0.8px,
+      theme(colors.mauve.2) 0.8px
+    );
+  background-size: 8px 8px;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    theme(colors.mauve.2) 50%
+  );
 }

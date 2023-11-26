@@ -15,7 +15,7 @@ export default function Separator(props: SeparatorProps) {
     <div
       {...separatorProps}
       className={cx(
-        'bg-neutral-100 opacity-10',
+        'bg-mauve-a3',
         props.orientation === 'vertical' ? 'h-full w-px' : 'h-px w-full',
         props.className,
         separatorProps.className,

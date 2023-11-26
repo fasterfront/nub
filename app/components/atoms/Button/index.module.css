@@ -39,7 +39,7 @@
       rgba(255, 255, 255, 0.09) 0%,
       transparent 100%
     ),
-    theme(colors.neutral.900);
+    theme(colors.gray.1);
 }
 
 .button.theme-default {
@@ -48,9 +48,9 @@
       rgba(255, 255, 255, 0.16) 0%,
       transparent 100%
     ),
-    theme(colors.neutral.900);
+    theme(colors.gray.1);
   box-shadow:
-    0 0 0 1px theme(colors.neutral.900),
+    0 0 0 1px theme(colors.gray.1),
     0 1px 2px 0 rgba(13, 13, 18, 0.4);
 }
 
@@ -60,7 +60,7 @@
   align-items: center;
   flex-grow: 1;
   z-index: 5;
-  color: theme(textColor.white);
+  color: theme(textColor.gray.12);
   padding: theme(padding.2) theme(padding.3);
   font-size: theme(fontSize.sm);
   font-weight: theme(fontWeight.semibold);
@@ -90,7 +90,7 @@
 }
 
 .button.pressed .inner::before {
-  background: theme(colors.neutral.900);
+  background: theme(colors.gray.1);
   opacity: 0.14;
 }
 
