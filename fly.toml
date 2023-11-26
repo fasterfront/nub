@@ -10,7 +10,7 @@ primary_region = "iad"
 
 [http_service]
 internal_port = 8080
-force_https = true
+force_https = false        # We force HTTPS via middleware so we can do a single redirect from eg http://www.nub.com to https://nub.com
 auto_stop_machines = false
 auto_start_machines = true
 min_machines_running = 1
