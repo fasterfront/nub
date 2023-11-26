@@ -1,6 +1,6 @@
 import { type MetaFunction } from '@remix-run/react'
 
-import logo from 'assets/logo.svg'
+import Logo from 'components/atoms/Logo'
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,7 +12,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <main className="container mx-auto flex min-h-full flex-col items-center justify-center gap-y-4 px-8">
-      <img alt="nub" className="w-full max-w-xl" src={logo} />
+      <Logo aria-label="nub" className="w-full max-w-xl" />
     </main>
   )
 }
