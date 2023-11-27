@@ -1,9 +1,16 @@
+import typograph from '@tailwindcss/typography'
+import defaultTheme from 'tailwindcss/defaultTheme'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./app/**/*.{ts,tsx}'],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['"Open Sans"', ...defaultTheme.fontFamily.sans],
+      },
+    },
     colors: {
       primary: '#5f57ff',
       danger: '#df1c41',
@@ -62,6 +69,15 @@ export default {
         12: 'var(--violet-12)',
       },
     },
+    container: {
+      center: true,
+      padding: '1rem',
+    },
+    screens: {
+      tablet: '768px',
+      desktop: '1024px',
+      large: '1280px',
+    },
   },
-  plugins: [],
+  plugins: [typograph()],
 }
