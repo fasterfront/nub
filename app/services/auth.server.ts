@@ -1,4 +1,5 @@
 import { createCookie } from '@remix-run/node'
+import { createId } from '@paralleldrive/cuid2'
 import { sql } from 'drizzle-orm'
 import { Authenticator } from 'remix-auth'
 import {
@@ -56,6 +57,10 @@ async function strategyVerifyCallback({
 }: StrategyVerifyCallBackParams) {
   try {
     return upsertUserStatement.get({
+      // TODO: we have $default set for id, but since we prepare the statement,
+      // Drizzle runs the default function only once and reuses the value.
+      // https://github.com/drizzle-team/drizzle-orm/issues/1588
+      id: createId(),
       handle: profile._json.login,
       name: profile._json.name,
       email: profile.emails[0].value,
@@ -72,6 +77,7 @@ export type AuthUser = ReturnType<(typeof upsertUserStatement)['get']>
 const upsertUserStatement = db
   .insert(user)
   .values({
+    id: sql.placeholder('id'),
     handle: sql.placeholder('handle'),
     name: sql.placeholder('name'),
     email: sql.placeholder('email'),
