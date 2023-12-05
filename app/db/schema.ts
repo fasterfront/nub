@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm'
 import {
   foreignKey,
   index,
+  integer,
   primaryKey,
   sqliteTable,
   text,
@@ -118,6 +119,7 @@ export const nubRelations = relations(nub, ({ one, many }) => ({
   }),
   files: many(file),
   revisions: many(revision),
+  comments: many(comment),
 }))
 
 export const nubStar = sqliteTable(
@@ -158,6 +160,7 @@ export const file = sqliteTable(
   },
   (table) => ({
     idxNub: index('idx_file_nub').on(table.nubId),
+    unique: unique().on(table.nubId, table.name),
   }),
 )
 export const fileRelations = relations(file, ({ one }) => ({
@@ -210,5 +213,120 @@ export const revisionFileRelations = relations(revisionFile, ({ one }) => ({
   file: one(file, {
     fields: [revisionFile.fileId],
     references: [file.id],
+  }),
+}))
+
+export const comment = sqliteTable(
+  'comment',
+  {
+    id: id().primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    nubId: text('nub_id')
+      .notNull()
+      .references(() => nub.id),
+    revisionId: text('revision_id')
+      .notNull()
+      .references(() => revision.id),
+    revisionFileId: text('revision_file_id')
+      .notNull()
+      .references(() => revisionFile.fileId),
+    lineStart: integer('line_start'),
+    charStart: integer('char_start'),
+    lineEnd: integer('line_end'),
+    charEnd: integer('char_end'),
+    content: text('content').notNull(),
+    outdated: integer('outdated', { mode: 'boolean' }).notNull().default(false),
+    resolved: integer('resolved', { mode: 'boolean' }).notNull().default(false),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => ({
+    idxNub: index('idx_comment_nub').on(table.nubId),
+    idxRevision: index('idx_comment_revision').on(table.revisionId),
+  }),
+)
+export const commentRelations = relations(comment, ({ one, many }) => ({
+  file: one(file, {
+    fields: [comment.revisionFileId],
+    references: [file.id],
+  }),
+  originalFile: one(revisionFile, {
+    fields: [comment.revisionId, comment.revisionFileId],
+    references: [revisionFile.revisionId, revisionFile.fileId],
+  }),
+  user: one(user, {
+    fields: [comment.userId],
+    references: [user.id],
+  }),
+  commentHistory: many(commentHistory),
+}))
+
+export const commentHistory = sqliteTable(
+  'comment_history',
+  {
+    id: createdAt('id').primaryKey(),
+    commentId: text('comment_id')
+      .notNull()
+      .references(() => comment.id),
+    content: text('content').notNull(),
+  },
+  (table) => ({
+    idxComment: index('idx_comment_history_comment').on(table.commentId),
+  }),
+)
+export const commentHistoryRelations = relations(commentHistory, ({ one }) => ({
+  comment: one(comment, {
+    fields: [commentHistory.commentId],
+    references: [comment.id],
+  }),
+}))
+
+export const answer = sqliteTable(
+  'answer',
+  {
+    id: id().primaryKey(),
+    commentId: text('comment_id').references(() => comment.id),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    content: text('content').notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => ({
+    idxComment: index('idx_answer_comment').on(table.commentId),
+  }),
+)
+export const answerRelations = relations(answer, ({ one, many }) => ({
+  comment: one(comment, {
+    fields: [answer.commentId],
+    references: [comment.id],
+  }),
+  user: one(user, {
+    fields: [answer.userId],
+    references: [user.id],
+  }),
+  answerHistory: many(answerHistory),
+}))
+
+export const answerHistory = sqliteTable(
+  'answer_history',
+  {
+    id: createdAt('id').primaryKey(),
+    answerId: text('answer_id')
+      .notNull()
+      .references(() => answer.id),
+    content: text('content').notNull(),
+  },
+  (table) => ({
+    idxAnswer: index('idx_answer_history_answer').on(table.answerId),
+  }),
+)
+export const answerHistoryRelations = relations(answerHistory, ({ one }) => ({
+  answer: one(answer, {
+    fields: [answerHistory.answerId],
+    references: [answer.id],
   }),
 }))

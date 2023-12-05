@@ -1,8 +1,10 @@
-import { type MetaFunction } from '@remix-run/node'
-
+import { type DataFunctionArgs, type MetaFunction } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
 import useUser from 'hooks/useUser'
 import Link from 'components/atoms/Link'
 import Prose from 'components/atoms/Prose'
+
+import getPublicNubs from './getPublicNubs.server'
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,11 +16,21 @@ export const meta: MetaFunction = () => {
   ]
 }
 
+export function loader({ request }: DataFunctionArgs) {
+  const url = new URL(request.url)
+  const maybePage = Number(url.searchParams.get('page'))
+  const page = Number.isNaN(maybePage) || maybePage < 1 ? 1 : maybePage
+
+  const nubs = getPublicNubs({ limit: 10, offset: (page - 1) * 10 })
+  return { nubs }
+}
+
 export default function Index() {
   const user = useUser()
+  const { nubs } = useLoaderData<typeof loader>()
 
   return (
-    <main className="container flex justify-center pt-8 tablet:pt-12 desktop:pt-24 large:pt-40">
+    <main className="container flex flex-col items-center justify-center pt-8 tablet:pt-12 desktop:pt-24 large:pt-40">
       <Prose>
         <h2>
           Welcome
@@ -35,7 +47,6 @@ export default function Index() {
           </Link>
           .
         </p>
-
         <p>
           {!user && (
             <>
@@ -47,6 +58,16 @@ export default function Index() {
           We'll let you know when nub is available!
         </p>
       </Prose>
+      <pre className="mt-20 flex max-w-full flex-col gap-y-4">
+        {nubs.map((nub) => (
+          <code
+            key={nub.id}
+            className="max-w-full overflow-x-auto rounded border border-gray-5 bg-gray-3 p-2"
+          >
+            {JSON.stringify(nub, null, 2)}
+          </code>
+        ))}
+      </pre>
     </main>
   )
 }
