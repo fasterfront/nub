@@ -13,7 +13,7 @@ WORKDIR /app
 ENV NODE_ENV="production"
 
 # Install pnpm
-ARG PNPM_VERSION=8.10.5
+ARG PNPM_VERSION=8.12.0
 RUN npm install -g pnpm@$PNPM_VERSION
 
 # Throw-away build stage to reduce size of final image
@@ -42,9 +42,39 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
-# Install sqlite3 and its dependencies
-RUN apt-get update -y && apt-get install -y ca-certificates fuse3 sqlite3
+# Install nginx, sqlite3 and its dependencies
+RUN apt-get update -y && apt-get install -y ca-certificates fuse3 nginx sqlite3
 COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
+
+# Configure nginx
+RUN sed -i 's/access_log\s.*;/access_log stdout;/' /etc/nginx/nginx.conf && \
+  sed -i 's/error_log\s.*;/error_log stderr info;/' /etc/nginx/nginx.conf
+
+COPY <<-"EOF" /etc/nginx/sites-available/default
+server {
+  listen 3000 default_server;
+  listen [::]:3000 default_server;
+  access_log stdout;
+
+  root /app/public;
+
+  location / {
+    try_files $uri @backend;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  location @backend {
+    proxy_pass http://localhost:3001;
+    proxy_set_header Host $http_host;
+  }
+}
+EOF
+
+# Build a Procfile for production use
+COPY <<-"EOF" /app/Procfile.prod
+nginx: /usr/sbin/nginx -g "daemon off;"
+app: PORT=3001 pnpm start:prod
+EOF
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000

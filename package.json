@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "NODE_ENV=development node ./server.mjs",
     "build": "vite build && vite build --ssr",
-    "start": "NODE_ENV=production node ./server.mjs",
+    "start:dev": "NODE_ENV=production node --env-file .env ./server.mjs",
+    "start:prod": "NODE_ENV=production node ./server.mjs",
+    "start": "nf start --procfile Procfile.prod",
     "migration:create": "drizzle-kit generate:sqlite",
     "migration:drop": "drizzle-kit drop",
     "migration:run": "esrun ./app/db/migrate.ts",
@@ -25,6 +27,7 @@
     "directory-tree": "^3.5.1",
     "drizzle-orm": "^0.29.0",
     "express": "^4.18.2",
+    "foreman": "^3.0.1",
     "isbot": "^3.7.1",
     "react": "^18.2.0",
     "react-aria": "^3.30.0",
@@ -35,7 +38,7 @@
     "requestidlecallback": "^0.3.0"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.4.10",
+    "@flydotio/dockerfile": "^0.4.11",
     "@remix-run/dev": "^2.3.0",
     "@remix-run/eslint-config": "^2.3.0",
     "@tailwindcss/typography": "^0.5.10",
@@ -62,5 +65,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dockerfile": {
+    "litefs": true,
+    "nginxRoot": "public"
   }
 }
