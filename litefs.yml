@@ -3,13 +3,13 @@
 # storage on disk. It intercepts disk writes to determine transaction boundaries
 # so that those transactions can be saved and shipped to replicas.
 fuse:
-  dir: '/litefs'
+  dir: '/app/.data'
 
 # The data section describes settings for the internal LiteFS storage. We'll
 # mount a volume to the data directory so it can be persisted across restarts.
 # However, this data should not be accessed directly by the user application.
 data:
-  dir: '/app/.data'
+  dir: '/litefs'
 
 # This flag ensure that LiteFS continues to run if there is an issue on starup.
 # It makes it easy to ssh in and debug any issues you might be having rather
@@ -22,7 +22,7 @@ exit-on-error: false
 proxy:
   addr: ':8080'
   target: 'localhost:3000'
-  db: 'db'
+  db: 'db.sqlite'
 
 # The lease section specifies how the cluster will be managed. We're using the
 # "consul" lease type so that our application can dynamically change the primary.

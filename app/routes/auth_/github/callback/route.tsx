@@ -5,8 +5,11 @@ import {
   oAuthTypeCookie,
   redirectCookie,
 } from 'services/auth.server'
+import { ensurePrimaryRegion } from 'services/http.server'
 
 export async function loader({ request }: DataFunctionArgs) {
+  ensurePrimaryRegion()
+
   const redirectUrl = await redirectCookie.parse(request.headers.get('Cookie'))
   const oAuthType = await oAuthTypeCookie.parse(request.headers.get('Cookie'))
 
