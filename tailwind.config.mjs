@@ -8,7 +8,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Open Sans"', ...defaultTheme.fontFamily.sans],
+        sans: [
+          '"Open Sans"',
+          '"Open Sans-fallback"',
+          ...defaultTheme.fontFamily.sans,
+        ],
       },
     },
     colors: {

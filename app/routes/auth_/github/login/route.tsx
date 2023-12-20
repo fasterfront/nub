@@ -1,4 +1,4 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node'
+import { redirect, type ActionFunctionArgs } from '@remix-run/node'
 
 import {
   authenticator,
@@ -10,7 +10,7 @@ export function loader() {
   return redirect('/')
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const url = new URL(request.url)
   const redirectUrl = request.headers.get('referer') || '/'
   const oAuthType = url.searchParams.get('type') ?? 'github'

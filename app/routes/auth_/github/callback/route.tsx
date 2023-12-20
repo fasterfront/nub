@@ -1,4 +1,4 @@
-import { type DataFunctionArgs } from '@remix-run/node'
+import { type LoaderFunctionArgs } from '@remix-run/node'
 
 import {
   authenticator,
@@ -7,7 +7,7 @@ import {
 } from 'services/auth.server'
 import { ensurePrimaryRegion } from 'services/http.server'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   ensurePrimaryRegion()
 
   const redirectUrl = await redirectCookie.parse(request.headers.get('Cookie'))

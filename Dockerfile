@@ -56,7 +56,7 @@ server {
   listen [::]:3000 default_server;
   access_log stdout;
 
-  root /app/public;
+  root /app/build/client;
 
   location / {
     try_files $uri @backend;

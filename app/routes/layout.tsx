@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { type SerializeFrom, type DataFunctionArgs } from '@remix-run/node'
+import { type SerializeFrom, type LoaderFunctionArgs } from '@remix-run/node'
 import {
   Form,
   Outlet,
@@ -23,7 +23,7 @@ import GitHubIcon from 'components/icons/GitHubIcon'
 import LogoutIcon from 'components/icons/LogoutIcon'
 import { authenticator } from 'services/auth.server'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return { user: await authenticator.isAuthenticated(request) }
 }
 

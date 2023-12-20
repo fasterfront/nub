@@ -1,35 +1,41 @@
 import { createRequestHandler } from '@remix-run/express'
 import { installGlobals } from '@remix-run/node'
 import express from 'express'
+import logger from 'pino-http'
 
 installGlobals()
 
-const {
-  unstable_createViteServer: createViteServer,
-  unstable_loadViteServerBuild: loadViteServerBuild,
-} = process.env.NODE_ENV === 'development' ? await import('@remix-run/dev') : {}
+const { unstable_viteServerBuildModuleId } =
+  process.env.NODE_ENV === 'production' ? {} : await import('@remix-run/dev')
 
-const vite = await createViteServer?.()
+const vite =
+  process.env.NODE_ENV === 'production'
+    ? undefined
+    : await import('vite').then(({ createServer }) =>
+        createServer({ server: { middlewareMode: true } }),
+      )
 
 const app = express()
+app.disable('x-powered-by')
+app.use(logger())
 app.use(permanentRedirects)
 
 if (vite) {
   app.use(vite.middlewares)
 } else {
   app.use(
-    '/build',
-    express.static('public/build', { immutable: true, maxAge: '1y' }),
+    '/assets',
+    express.static('build/client/assets', { immutable: true, maxAge: '1y' }),
   )
 }
-app.use(express.static('public', { maxAge: '1h' }))
+app.use(express.static('build/client', { maxAge: '1h' }))
 
 app.all(
   '*',
   createRequestHandler({
     build: vite
-      ? () => loadViteServerBuild(vite)
-      : await import('./build/index.js'),
+      ? () => vite.ssrLoadModule(unstable_viteServerBuildModuleId)
+      : await import('./build/server/index.js'),
   }),
 )
 
