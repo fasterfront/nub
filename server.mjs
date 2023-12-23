@@ -1,48 +1,62 @@
 import { createRequestHandler } from '@remix-run/express'
-import { installGlobals } from '@remix-run/node'
 import express from 'express'
 import logger from 'pino-http'
 
-installGlobals()
+import cluster from 'node:cluster'
+import os from 'node:os'
+import process from 'node:process'
 
-const { unstable_viteServerBuildModuleId } =
-  process.env.NODE_ENV === 'production' ? {} : await import('@remix-run/dev')
+const numCPUs =
+  process.env.NODE_ENV === 'production' ? os.availableParallelism() : 1
 
-const vite =
-  process.env.NODE_ENV === 'production'
-    ? undefined
-    : await import('vite').then(({ createServer }) =>
-        createServer({ server: { middlewareMode: true } }),
-      )
-
-const app = express()
-app.disable('x-powered-by')
-app.use(logger())
-app.use(permanentRedirects)
-
-if (vite) {
-  app.use(vite.middlewares)
+if (cluster.isPrimary) {
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork()
+  }
 } else {
-  app.use(
-    '/assets',
-    express.static('build/client/assets', { immutable: true, maxAge: '1y' }),
+  await startServer()
+}
+
+async function startServer() {
+  const { unstable_viteServerBuildModuleId } =
+    process.env.NODE_ENV === 'production' ? {} : await import('@remix-run/dev')
+
+  const vite =
+    process.env.NODE_ENV === 'production'
+      ? undefined
+      : await import('vite').then(({ createServer }) =>
+          createServer({ server: { middlewareMode: true } }),
+        )
+
+  const app = express()
+  app.disable('x-powered-by')
+  app.use(permanentRedirects)
+
+  if (vite) {
+    app.use(vite.middlewares)
+  } else {
+    app.use(
+      '/assets',
+      express.static('build/client/assets', { immutable: true, maxAge: '1y' }),
+    )
+  }
+
+  app.use(logger())
+
+  app.all(
+    '*',
+    createRequestHandler({
+      build: vite
+        ? () => vite.ssrLoadModule(unstable_viteServerBuildModuleId)
+        : await import('./build/server/index.js'),
+    }),
+  )
+
+  const port = process.env.PORT ?? 3000
+  app.listen(port, '0.0.0.0', () =>
+    console.log('Server started on http://localhost:' + port),
   )
 }
-app.use(express.static('build/client', { maxAge: '1h' }))
-
-app.all(
-  '*',
-  createRequestHandler({
-    build: vite
-      ? () => vite.ssrLoadModule(unstable_viteServerBuildModuleId)
-      : await import('./build/server/index.js'),
-  }),
-)
-
-const port = process.env.PORT ?? 3000
-app.listen(port, '0.0.0.0', () =>
-  console.log('Server started on http://localhost:' + port),
-)
 
 // --
 function permanentRedirects(req, res, next) {

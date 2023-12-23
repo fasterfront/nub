@@ -1,0 +1,16 @@
+diff --git a/package.json b/package.json
+index df275ca9430cd3bce9cda381a107a5a81c8eb321..16cb5108fa9e9930c01d026a987628cb0441e1a5 100644
+--- a/package.json
++++ b/package.json
+@@ -61,6 +61,11 @@
+                 "default": "./server.d.ts"
+             }
+         },
++        "./server.edge": {
++            "types": {
++                "default": "./server.d.ts"
++            }
++        },
+         "./experimental": {
+             "types": {
+                 "default": "./experimental.d.ts"

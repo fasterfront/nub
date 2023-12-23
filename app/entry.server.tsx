@@ -1,16 +1,8 @@
-import { PassThrough } from 'node:stream'
-
-import React from 'react'
-import { renderToPipeableStream } from 'react-dom/server'
-import { createReadableStreamFromReadable } from '@remix-run/node'
+import { renderToReadableStream } from 'react-dom/server.edge'
 import { type EntryContext } from '@remix-run/node'
 import { RemixServer } from '@remix-run/react'
 
 import isbot from 'isbot'
-
-React.useLayoutEffect = React.useEffect
-
-const ABORT_DELAY = 5000
 
 export default async function handleRequest(
   request: Request,
@@ -18,40 +10,24 @@ export default async function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext,
 ) {
-  return new Promise((resolve, reject) => {
-    let didError = false
-
-    const onReady = isbot(request.headers.get('user-agent'))
-      ? 'onAllReady'
-      : 'onShellReady'
-
-    const { pipe, abort } = renderToPipeableStream(
-      <RemixServer context={remixContext} url={request.url} />,
-      {
-        [onReady]() {
-          const body = new PassThrough()
-          responseHeaders.set('Content-Type', 'text/html; charset=utf-8')
-
-          resolve(
-            new Response(createReadableStreamFromReadable(body), {
-              headers: responseHeaders,
-              status: didError ? 500 : responseStatusCode,
-            }),
-          )
-
-          pipe(body)
-        },
-        onShellError(err) {
-          reject(err)
-          console.error(err)
-        },
-        onError(err) {
-          didError = true
-          console.error(err)
-        },
+  const body = await renderToReadableStream(
+    <RemixServer context={remixContext} url={request.url} />,
+    {
+      signal: request.signal,
+      onError(err) {
+        responseStatusCode = 500
+        console.error(err)
       },
-    )
+    },
+  )
 
-    AbortSignal.timeout(ABORT_DELAY).addEventListener('abort', abort)
+  if (isbot(request.headers.get('user-agent'))) {
+    await body.allReady
+  }
+
+  responseHeaders.set('Content-Type', 'text/html; charset=utf-8')
+  return new Response(body, {
+    headers: responseHeaders,
+    status: responseStatusCode,
   })
 }

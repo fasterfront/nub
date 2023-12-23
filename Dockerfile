@@ -23,12 +23,11 @@ FROM base as build
 RUN apt-get update -qq && \
   apt-get install -y build-essential pkg-config python-is-python3
 
-# Install node modules
-COPY --link package.json pnpm-lock.yaml ./
-RUN pnpm i --frozen-lockfile --prod=false
-
 # Copy application code
 COPY --link . .
+
+# Install node modules
+RUN pnpm i --frozen-lockfile --prod=false
 
 # Build application
 RUN pnpm build

@@ -7,5 +7,11 @@ import routes from './vite/routes'
 
 export default defineConfig({
   build: { target: browserslistToEsbuild() },
-  plugins: [remix({ routes }), tsconfigPaths()],
+  plugins: [
+    remix({
+      routes,
+      future: { v3_fetcherPersist: true, v3_relativeSplatPath: true },
+    }),
+    tsconfigPaths(),
+  ],
 })
