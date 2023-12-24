@@ -1,10 +1,10 @@
-import { createRequestHandler } from '@remix-run/express'
-import express from 'express'
-import logger from 'pino-http'
-
 import cluster from 'node:cluster'
 import os from 'node:os'
 import process from 'node:process'
+
+import { createRequestHandler } from '@remix-run/express'
+import express from 'express'
+import logger from 'pino-http'
 
 const numCPUs =
   process.env.NODE_ENV === 'production' ? os.availableParallelism() : 1
@@ -18,9 +18,6 @@ if (cluster.isPrimary) {
 }
 
 async function startServer() {
-  const { unstable_viteServerBuildModuleId } =
-    process.env.NODE_ENV === 'production' ? {} : await import('@remix-run/dev')
-
   const vite =
     process.env.NODE_ENV === 'production'
       ? undefined
@@ -47,7 +44,7 @@ async function startServer() {
     '*',
     createRequestHandler({
       build: vite
-        ? () => vite.ssrLoadModule(unstable_viteServerBuildModuleId)
+        ? () => vite.ssrLoadModule('virtual:remix/server-build')
         : await import('./build/server/index.js'),
     }),
   )
