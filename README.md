@@ -1,6 +1,6 @@
 # nub
 
-A collaborive alternative to Gist.
+A collaborative alternative to Gist.
 
 ## Run
 
